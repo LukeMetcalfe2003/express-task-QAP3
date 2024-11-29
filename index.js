@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = 3000;
@@ -14,6 +15,27 @@ const pool = new Pool({
     password: '8dogstrong',
     port: 5432,
 });
+
+// MongoDB connection
+const uri = 'mongodb+srv://lukemetcalfe:8dogstrong@databaseqap3.6sh8b.mongodb.net/';
+const client = new MongoClient(uri);
+const dbName = 'books';
+let bookCollection;
+
+// Connect to MongoDB and get the collection
+async function connectToMongo() {
+    try{
+        await client.connect();
+        const db = client.db(dbName);
+        bookCollection = db.collection('books');
+
+        // Make sure the collection exists
+        await bookCollection.createIndex({title: 1}, {unique: true});
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
 
 // create table
 async function createTable() {
