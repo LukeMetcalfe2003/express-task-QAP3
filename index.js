@@ -53,11 +53,11 @@ async function createTable() {
     }
 }
 
-createTable();
-
-app.get('/', (req, res) => {
-    res.render('index');
-});
+// initialize the connection
+async function initalize() {
+    await connectToMongo();
+    await createTable();
+}
 
 // GET /tasks - Get all tasks
 app.get('/tasks', async (req, res) => {
@@ -69,12 +69,6 @@ app.get('/tasks', async (req, res) => {
         response.status(500).send('Internal Server Error');
     }
 });
-
-// initialize the connection
-async function initalize() {
-    await connectToMongo();
-    await createTable();
-}
 
 // POST /tasks - Add a new task
 app.post('/tasks', async (request, response) => {
@@ -91,7 +85,7 @@ app.post('/tasks', async (request, response) => {
 // PUT /tasks/:id - Update a task's status
 app.put('/tasks/:id', async (request, response) => {
     const { status } = request.body;
-    const { id } = request.params;
+    const id = parseInt(request.params.id, 10);
     try{
         const result = await pool.query('UPDATE tasks SET status = $1 WHERE id = $2 RETURNING *', [status, id]);
         if (result.rowCount === 0) {
@@ -106,7 +100,7 @@ app.put('/tasks/:id', async (request, response) => {
 
 // DELETE /tasks/:id - Delete a task
 app.delete('/tasks/:id', async (request, response) => {
-    const { id } = request.params;
+    const id = parseInt(request.params.id, 10);
     try{
         const result = await pool.query('DELETE FROM tasks WHERE id = $1', [id]);
         if (result.rowCount === 0) {

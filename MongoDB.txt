@@ -1,0 +1,42 @@
+// Create collection
+db.createCollection("books");
+
+
+// Inserting the sample data
+
+db.books.insertMany([
+    {
+        title: "The Hobbit",
+        author: "J.R.R. Tolkien",
+        genre: "Fantasy",
+        year: 1937,
+    },
+    {
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        genre: "Fiction",
+        year: 1960,
+    },
+    {
+        title: "1984",
+        author: "George Orwell",
+        genre: "Dystopian",
+        year: 1949,
+    },
+]);
+
+// Get the book titles
+
+db.books.find({}, { title: 1, _id: 0});
+
+// Find the books written by J.R.R. Tolkien
+
+db.books.find({author: "J.R.R. Tolkien"});
+
+// Update genre of 1984 to Science Fiction
+
+db.books.updateOne({title: "1984"}, {$set: {genre: "Science Fiction"}});
+
+// Delete The Hobbit
+
+db.books.deleteOne({title: "The Hobbit"});
