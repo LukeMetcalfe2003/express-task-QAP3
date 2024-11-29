@@ -16,6 +16,7 @@ const pool = new Pool({
     port: 5432,
 });
 
+
 // MongoDB connection
 const uri = 'mongodb+srv://lukemetcalfe:8dogstrong@databaseqap3.6sh8b.mongodb.net/';
 const client = new MongoClient(uri);
@@ -69,6 +70,12 @@ app.get('/tasks', async (req, res) => {
     }
 });
 
+// initialize the connection
+async function initalize() {
+    await connectToMongo();
+    await createTable();
+}
+
 // POST /tasks - Add a new task
 app.post('/tasks', async (request, response) => {
     const { description, status } = request.body;
@@ -112,6 +119,8 @@ app.delete('/tasks/:id', async (request, response) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+initalize().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
 });
